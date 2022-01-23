@@ -1,19 +1,22 @@
 import express, { Request, Response } from "express";
 import { body, validationResult } from "express-validator";
+import jwt from "jsonwebtoken";
+
 import { RequestValidationError } from "../errors/request-validation-errors";
 import { BadRequestError } from "../errors/bad-request-error";
 import { User } from "../models/user";
+import copy from "../copy";
 
 const router = express.Router();
 
 router.post(
   "/api/users/signup",
   [
-    body("email").isEmail().withMessage("Enter a valid e-mail"),
+    body("email").isEmail().withMessage(copy.validation["email-invalid"]),
     body("password")
       .trim()
       .isLength({ min: 4 })
-      .withMessage("Enter a password of at least 4 characters"),
+      .withMessage(copy.validation["password-min"]),
   ],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
@@ -27,11 +30,25 @@ router.post(
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      throw new BadRequestError("Email already in use");
+      throw new BadRequestError(copy.validation["email-in-use"]);
     }
 
     const user = User.build({ email, password });
     await user.save();
+
+    // generate JWT
+    const userJWT = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+      },
+      process.env.JWT_SECRET! // ! tells TS to ignore this
+    );
+
+    // store in session
+    req.session = {
+      jwt: userJWT,
+    };
 
     res.status(201).send(user);
   }
