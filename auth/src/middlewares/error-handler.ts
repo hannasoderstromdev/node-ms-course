@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+
+import copy from "../copy";
 import { CustomError } from "../errors/custom-error";
 
 export const errorHandler = (
@@ -11,7 +13,7 @@ export const errorHandler = (
     res.status(400).send({ errors: err.serializeErrors() });
   }
 
-  res
-    .status(500)
-    .send({ errors: [{ message: err.message || "Something went wrong" }] });
+  res.status(500).send({
+    errors: [{ message: err.message || copy.errors["unknown-error"] }],
+  });
 };
