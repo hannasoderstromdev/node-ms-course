@@ -1,15 +1,16 @@
+import copy from "../copy";
 import { CustomError } from "./custom-error";
 
 export class NotFoundError extends CustomError {
   statusCode = 404;
 
   constructor() {
-    super("Route not found");
+    super(copy.errors["not-found"]);
 
     Object.setPrototypeOf(this, NotFoundError.prototype);
   }
 
   serializeErrors() {
-    return [{ message: "Not Found" }];
+    return [{ message: copy.errors["not-found"] }];
   }
 }

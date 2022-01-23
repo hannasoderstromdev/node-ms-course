@@ -1,11 +1,12 @@
+import copy from "../copy";
 import { CustomError } from "./custom-error";
 
 export class DatabaseConnectionError extends CustomError {
   statusCode = 500;
-  reason = "Error connecting to database";
+  reason = copy.errors["db-connect-error"];
 
   constructor() {
-    super("Error connecting to database");
+    super(copy.errors["db-connect-error"]);
 
     Object.setPrototypeOf(this, DatabaseConnectionError.prototype);
   }
