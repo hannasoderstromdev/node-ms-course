@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
 
+import useRequest from "../../hooks/use-request";
+
 const ErrorMessage = ({ errors, field }) => {
   return (
-    errors.length > 0 &&
+    errors &&
     errors.map(
       (error) =>
         error.field === field && (
@@ -18,20 +20,16 @@ const ErrorMessage = ({ errors, field }) => {
 const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState([]);
+  const { doRequest, errors } = useRequest({
+    url: "/api/users/signup",
+    method: "post",
+    body: { email, password },
+  });
 
   const onSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post("/api/users/signup", {
-        email,
-        password,
-      });
-      console.log(response.data);
-    } catch (error) {
-      setErrors(error.response.data.errors);
-    }
+    doRequest();
   };
 
   return (
