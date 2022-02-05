@@ -1,0 +1,14 @@
+{
+  "sign-in": {
+    "title": "Sign In",
+    "cta": "Sign in"
+  },
+  "sign-up": {
+    "title": "Sign Up",
+    "cta": "Sign up"
+  },
+  "fields": {
+    "email": "E-mail Address",
+    "password": "Password"
+  }
+}

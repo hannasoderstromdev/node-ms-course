@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 
 import useRequest from "../../hooks/use-request";
 import ErrorMessage from "../../components/ErrorMessage";
@@ -8,6 +9,7 @@ const Signup = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { t, i18n } = useTranslation();
   const { doRequest, errors } = useRequest({
     url: "/api/users/signup",
     method: "post",
@@ -22,9 +24,9 @@ const Signup = () => {
 
   return (
     <form onSubmit={onSubmit} className="container">
-      <h1>Signup</h1>
+      <h1>{t("sign-up.title")}</h1>
       <div className="form-group">
-        <label>Email Address</label>
+        <label>{t("fields.email")}</label>
         <input
           type="email"
           value={email}
@@ -34,7 +36,7 @@ const Signup = () => {
         <ErrorMessage errors={errors} field="email" />
       </div>
       <div className="form-group">
-        <label>Password</label>
+        <label>{t("fields.password")}</label>
         <input
           type="password"
           value={password}
@@ -43,7 +45,7 @@ const Signup = () => {
         />
         <ErrorMessage errors={errors} field="password" />
       </div>
-      <button className="btn btn-primary">Sign Up</button>
+      <button className="btn btn-primary">{t("sign-up.cta")}</button>
     </form>
   );
 };

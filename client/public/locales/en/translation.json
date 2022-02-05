@@ -1,0 +1,12 @@
+{
+  "sign-in": {
+    "title": "Sign In"
+  },
+  "sign-up": {
+    "title": "Sign Up"
+  },
+  "fields": {
+    "email": "E-mail Address",
+    "password": "Password"
+  }
+}
