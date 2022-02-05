@@ -43,7 +43,7 @@ router.put(
 
     await foundTicket.save();
 
-    new TicketUpdatedPublisher(natsWrapper.client).publish({
+    await new TicketUpdatedPublisher(natsWrapper.client).publish({
       id: foundTicket.id,
       title: foundTicket.title,
       price: foundTicket.price,

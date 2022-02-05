@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import { app } from "../../app";
 import { getAuthCookie } from "../../test/getAuthCookie";
 
+jest.mock("../../nats-wrapper.ts");
+
 it("returns 404 if ticket is not found", async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
 

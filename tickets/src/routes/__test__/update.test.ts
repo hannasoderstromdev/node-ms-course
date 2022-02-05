@@ -3,6 +3,9 @@ import request from "supertest";
 
 import { app } from "../../app";
 import { getAuthCookie } from "./../../test/getAuthCookie";
+import { natsWrapper } from "../../nats-wrapper";
+
+jest.mock("../../nats-wrapper.ts");
 
 it("returns 404 if id does not exist", async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
@@ -114,4 +117,21 @@ it("returns 200 and updates ticket", async () => {
 
   expect(updateResponse.body.title).toEqual("New Title");
   expect(updateResponse.body.price).toEqual(2001);
+});
+
+it("publishes an event", async () => {
+  const cookie = getAuthCookie();
+  const response = await request(app)
+    .post("/api/tickets")
+    .set("Cookie", cookie)
+    .send({ title: "Title", price: 2000 })
+    .expect(201);
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send({ title: "New Title", price: 2001 })
+    .expect(200);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

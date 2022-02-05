@@ -3,6 +3,8 @@ import request from "supertest";
 
 import { app } from "../../app";
 
+jest.mock("../../nats-wrapper.ts");
+
 it("fetches a list of tickets", async () => {
   await request(app).post("/api/tickets").set("Cookie", getAuthCookie()).send({
     title: "Title One",

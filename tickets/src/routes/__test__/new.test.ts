@@ -1,8 +1,11 @@
 import request from "supertest";
+
 import { app } from "../../app";
 import { getAuthCookie } from "../../test/getAuthCookie";
-
 import { Ticket } from "../../models/ticket";
+import { natsWrapper } from "./../../nats-wrapper";
+
+jest.mock("../../nats-wrapper.ts");
 
 it("has a route-handler listening to /api/tickets for post requests", async () => {
   const response = await request(app).post("/api/tickets").send({});
@@ -96,4 +99,16 @@ it("creates a new ticket in the database", async () => {
   expect(tickets.length).toEqual(1);
   expect(tickets[0].title).toEqual(title);
   expect(tickets[0].price).toEqual(price);
+});
+
+it("publishes an event", async () => {
+  const title = "Title";
+
+  await request(app)
+    .post("/api/tickets")
+    .set("Cookie", getAuthCookie())
+    .send({ title, price: 20 })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
