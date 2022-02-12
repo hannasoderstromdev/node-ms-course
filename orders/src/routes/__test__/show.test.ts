@@ -3,6 +3,7 @@ import request from "supertest";
 import { app } from "../../app";
 import { Ticket } from "../../models/ticket";
 import { getAuthCookie } from "../../test/getAuthCookie";
+import { getMongoId } from "../../test/getMongoId";
 
 it("returns 401 for unauthorized user", async () => {
   await request(app)
@@ -12,7 +13,11 @@ it("returns 401 for unauthorized user", async () => {
 });
 
 it("returns 401 for wrong user", async () => {
-  const ticket = Ticket.build({ title: "Title", price: 20 });
+  const ticket = Ticket.build({
+    title: "Title",
+    price: 20,
+    id: getMongoId(),
+  });
   await ticket.save();
 
   const userOne = getAuthCookie();
@@ -41,7 +46,7 @@ it("returns 404 on order not found", async () => {
 });
 
 it("returns 200 and the order", async () => {
-  const ticket = Ticket.build({ title: "Title", price: 20 });
+  const ticket = Ticket.build({ title: "Title", price: 20, id: getMongoId() });
   await ticket.save();
 
   const user = getAuthCookie();

@@ -1,16 +1,15 @@
 import request from "supertest";
-import mongoose from "mongoose";
-import { OrderStatus } from "@hs-tickets/common";
 
 import { getAuthCookie } from "../../test/getAuthCookie";
 import { app } from "../../app";
 import { Ticket } from "../../models/ticket";
-import { Order } from "../../models/order";
+import { getMongoId } from "../../test/getMongoId";
 
 const buildTicket = async () => {
   const ticket = Ticket.build({
     title: "Concert",
     price: 20,
+    id: getMongoId(),
   });
   await ticket.save();
 

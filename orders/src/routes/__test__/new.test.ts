@@ -6,9 +6,11 @@ import { getAuthCookie } from "../../test/getAuthCookie";
 import { app } from "../../app";
 import { Ticket } from "../../models/ticket";
 import { Order } from "../../models/order";
+import { natsWrapper } from "../../nats-wrapper";
+import { getMongoId } from "../../test/getMongoId";
 
 it("returns error 404 if ticket does not exist", async () => {
-  const ticketId = new mongoose.Types.ObjectId();
+  const ticketId = getMongoId();
 
   await request(app)
     .post("/api/orders")
@@ -21,6 +23,7 @@ it("returns error 400 if ticket is reserved", async () => {
   const ticket = Ticket.build({
     title: "concert",
     price: 20,
+    id: getMongoId(),
   });
 
   await ticket.save();
@@ -48,6 +51,7 @@ it("returns 201 when a ticket is successfully reserved", async () => {
   const ticket = Ticket.build({
     title,
     price,
+    id: getMongoId(),
   });
   await ticket.save();
 
@@ -58,12 +62,12 @@ it("returns 201 when a ticket is successfully reserved", async () => {
     .expect(201);
 
   expect(response.body).toEqual({
-    __v: 0,
+    version: 0,
     expiresAt: expect.any(String),
     id: expect.any(String),
     status: "created",
     ticket: {
-      __v: 0,
+      version: 0,
       id: expect.any(String),
       price,
       title,
@@ -72,4 +76,22 @@ it("returns 201 when a ticket is successfully reserved", async () => {
   });
 });
 
-it.todo("emits and order created event");
+it("emits and order created event", async () => {
+  const title = "Concert";
+  const price = 20;
+
+  const ticket = Ticket.build({
+    title,
+    price,
+    id: getMongoId(),
+  });
+  await ticket.save();
+
+  await request(app)
+    .post("/api/orders")
+    .set("Cookie", getAuthCookie())
+    .send({ ticketId: ticket.id })
+    .expect(201);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
