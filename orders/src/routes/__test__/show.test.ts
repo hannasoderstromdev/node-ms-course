@@ -40,7 +40,7 @@ it("returns 404 on order not found", async () => {
     .expect(404);
 });
 
-it("returns the order", async () => {
+it("returns 200 and the order", async () => {
   const ticket = Ticket.build({ title: "Title", price: 20 });
   await ticket.save();
 
