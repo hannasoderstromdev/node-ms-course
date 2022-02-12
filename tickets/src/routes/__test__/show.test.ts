@@ -1,13 +1,13 @@
 import request from "supertest";
-import mongoose from "mongoose";
 
 import { app } from "../../app";
 import { getAuthCookie } from "../../test/getAuthCookie";
+import { getMongoId } from "./../../test/getMongoId";
 
 jest.mock("../../nats-wrapper.ts");
 
 it("returns 404 if ticket is not found", async () => {
-  const id = new mongoose.Types.ObjectId().toHexString();
+  const id = getMongoId();
 
   await request(app).get(`/api/tickets/${id}`).send().expect(404);
 });

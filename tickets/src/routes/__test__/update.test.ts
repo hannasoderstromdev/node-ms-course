@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
 import request from "supertest";
 
 import { app } from "../../app";
 import { getAuthCookie } from "./../../test/getAuthCookie";
 import { natsWrapper } from "../../nats-wrapper";
+import { getMongoId } from "../../test/getMongoId";
 
 jest.mock("../../nats-wrapper.ts");
 
 it("returns 404 if id does not exist", async () => {
-  const id = new mongoose.Types.ObjectId().toHexString();
+  const id = getMongoId();
 
   await request(app)
     .put(`/api/tickets/${id}`)
@@ -18,7 +18,7 @@ it("returns 404 if id does not exist", async () => {
 });
 
 it("returns 401 if not authenticated", async () => {
-  const id = new mongoose.Types.ObjectId().toHexString();
+  const id = getMongoId();
 
   await request(app)
     .put(`/api/tickets/${id}`)
