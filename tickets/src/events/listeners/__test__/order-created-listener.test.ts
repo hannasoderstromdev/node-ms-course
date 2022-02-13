@@ -54,3 +54,19 @@ it("acknowledges the message", async () => {
 
   expect(msg.ack).toHaveBeenCalled();
 });
+
+it("publishes an ticket updated event", async () => {
+  const { listener, data, msg } = await setup();
+
+  await listener.onMessage(data, msg);
+
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
+
+  // @ts-ignore
+  const eventSubject = natsWrapper.client.publish.mock.calls[0][0];
+  expect(eventSubject).toEqual("ticket:updated");
+
+  // @ts-ignore
+  const updatedData = JSON.parse(natsWrapper.client.publish.mock.calls[0][1]);
+  expect(updatedData.orderId).toEqual(data.id);
+});
