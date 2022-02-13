@@ -4,6 +4,7 @@ import { app } from "../../app";
 import { getAuthCookie } from "./../../test/getAuthCookie";
 import { natsWrapper } from "../../nats-wrapper";
 import { getMongoId } from "../../test/getMongoId";
+import { Ticket } from "../../models/ticket";
 
 jest.mock("../../nats-wrapper.ts");
 
@@ -134,4 +135,23 @@ it("publishes an event", async () => {
     .expect(200);
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();
+});
+
+it("rejects update for reserved ticket", async () => {
+  const cookie = getAuthCookie();
+  const response = await request(app)
+    .post("/api/tickets")
+    .set("Cookie", cookie)
+    .send({ title: "Title", price: 2000 })
+    .expect(201);
+
+  const ticket = await Ticket.findById(response.body.id);
+  ticket?.set({ orderId: getMongoId() });
+  await ticket?.save();
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send({ title: "New Title", price: 2001 })
+    .expect(400);
 });

@@ -6,6 +6,7 @@ import {
   requireAuth,
   NotAuthorizedError,
   copy,
+  BadRequestError,
 } from "@hs-tickets/common";
 
 import { Ticket } from "../models/ticket";
@@ -30,6 +31,10 @@ router.put(
 
     if (!foundTicket) {
       throw new NotFoundError();
+    }
+
+    if (foundTicket.orderId) {
+      throw new BadRequestError(copy.errors["ticket-reserved"]);
     }
 
     if (foundTicket.userId !== req.currentUser!.id) {
