@@ -24,10 +24,19 @@ it("returns a 400 with an invalid password", async () => {
 });
 
 it("returns a 400 with missing password ", async () => {
-  await request(app)
+  const response = await request(app)
     .post("/api/users/signup")
     .send({ email: "test@test.com" })
     .expect(400);
+
+  expect(response.body).toEqual({
+    errors: [
+      {
+        field: "password",
+        message: "Please enter a password of at least 4 characters",
+      },
+    ],
+  });
 });
 
 it("returns a 400 with missing email", async () => {
