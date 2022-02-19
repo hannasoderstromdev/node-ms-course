@@ -38,6 +38,9 @@ it("returns an error if title is empty", async () => {
     });
 
   expect(response.status).toEqual(400);
+  expect(response.body).toEqual({
+    errors: [{ field: "title", message: "Please enter a title" }],
+  });
 });
 
 it("returns an error if title is missing", async () => {
@@ -49,6 +52,9 @@ it("returns an error if title is missing", async () => {
     });
 
   expect(response.status).toEqual(400);
+  expect(response.body).toEqual({
+    errors: [{ field: "title", message: "Please enter a title" }],
+  });
 });
 
 it("returns an error if price is less than zero", async () => {
@@ -61,6 +67,11 @@ it("returns an error if price is less than zero", async () => {
     });
 
   expect(response.status).toEqual(400);
+  expect(response.body).toEqual({
+    errors: [
+      { field: "price", message: "Please enter a price greater than zero" },
+    ],
+  });
 });
 
 it("returns an error if price missing", async () => {
@@ -72,6 +83,11 @@ it("returns an error if price missing", async () => {
     });
 
   expect(response.status).toEqual(400);
+  expect(response.body).toEqual({
+    errors: [
+      { field: "price", message: "Please enter a price greater than zero" },
+    ],
+  });
 });
 
 it("returns 201 when creating a ticket", async () => {
