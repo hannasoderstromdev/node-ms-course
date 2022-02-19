@@ -6,6 +6,7 @@ import { getMongoId } from "../../test/getMongoId";
 import { app } from "../../app";
 import { Order } from "../../models/order";
 import { stripe } from "../../stripe";
+import { Payment } from "../../models/payment";
 
 jest.mock("../../stripe");
 
@@ -72,4 +73,7 @@ it("returns a 201 with valid inputs", async () => {
   expect(chargeOptions.source).toEqual("tok_visa");
   expect(chargeOptions.amount).toEqual(order.price);
   expect(chargeOptions.currency).toEqual("usd");
+
+  const payment = Payment.findOne({ orderId: order.id });
+  expect(payment).not.toEqual(null);
 });
