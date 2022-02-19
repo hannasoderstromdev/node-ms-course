@@ -8,10 +8,12 @@ import Header from "../components/Header";
 const AppComponent = ({ Component, pageProps, currentUser }) => {
   return (
     <I18nextProvider i18n={i18n}>
-      <div>
+      <div className="d-flex flex-column justify-content-between">
         <Header currentUser={currentUser} />
-        <Component {...pageProps} />
-        <footer>(c) 2022 by Hanna Söderström</footer>
+        <Component {...pageProps} currentUser={currentUser} />
+        <footer className="d-flex justify-content-center fixed-bottom">
+          (c) 2022 by Hanna Söderström
+        </footer>
       </div>
     </I18nextProvider>
   );
@@ -25,7 +27,11 @@ AppComponent.getInitialProps = async (appContext) => {
     let pageProps = {};
 
     if (appContext.Component.getInitialProps) {
-      pageProps = await appContext.Component.getInitialProps(appContext.ctx);
+      pageProps = await appContext.Component.getInitialProps(
+        appContext.ctx,
+        client,
+        data.currentUser
+      );
     }
 
     return { currentUser: data.currentUser, pageProps };
