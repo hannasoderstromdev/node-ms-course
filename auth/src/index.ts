@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import { app } from "./app";
 
 const start = async () => {
+  console.log("Useless log...");
+
   if (!process.env.JWT_SECRET) {
     throw new Error("JWT_SECRET must be defined");
   }
